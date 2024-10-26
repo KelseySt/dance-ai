@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import time
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
+from handle_video import get_mismatch_frames
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -41,7 +42,8 @@ def wait_for_files_active(files, max_retries=10, initial_delay=5):
 
 
 
-def generate_feedback(user_video_name, ref_video_name): 
+def generate_feedback(user_video_name, ref_video_name, mismatch): 
+    """
     generation_config = {
         "temperature": 1,
         "top_p": 0.95,
@@ -50,8 +52,14 @@ def generate_feedback(user_video_name, ref_video_name):
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
-            required=["user_video_name", "ref_video_name", "feedback"],
+            required=["parent_frame", "student_frames", "user_video_name", "ref_video_name", "feedback", "timestamp", "summary"],
             properties={
+                "parent_frame": content.Schema(
+                    type=content.Type.STRING
+                ),
+                "student_frames": content.Schema(
+                    type=content.Type.ARRAY
+                ),
                 "user_video_name": content.Schema(
                     type=content.Type.STRING
                 ),
@@ -59,23 +67,10 @@ def generate_feedback(user_video_name, ref_video_name):
                     type=content.Type.STRING
                 ),
                 "feedback": content.Schema(
-                    type=content.Type.ARRAY,
-                    items=content.Schema(
-                        type=content.Type.OBJECT,
-                        enum=[],
-                        required=["timestamp", "error", "suggestion"],
-                        properties={
-                            "timestamp": content.Schema(
-                                type=content.Type.STRING
-                            ),
-                            "error": content.Schema(
-                                type=content.Type.STRING
-                            ),
-                            "suggestion": content.Schema(
-                                type=content.Type.STRING
-                            )
-                        }
-                    )
+                    type=content.Type.STRING
+                ),
+                "timestamp": content.Schema(
+                    type=content.Type.STRING
                 ),
                 "summary": content.Schema(
                     type=content.Type.STRING
@@ -84,7 +79,57 @@ def generate_feedback(user_video_name, ref_video_name):
         ),
         "response_mime_type": "application/json"
     }
-
+    """
+    generation_config = {
+        "response_mime_type": "application/json",
+        "response_schema": { 
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "teacher_frame": {
+                        "type": "integer",
+                        "description": "Frame number from the teacher video."
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of the teacher frame in HH:MM:SSS format."
+                    },
+                    "timestamp_student_range": {
+                        "type": "string",
+                        "description": "Timestamp of the student frames in HH:MM:SSS-HH:MM:SSS format."
+                    },
+                    "student_frames": {
+                        "type": "array",
+                        "items": {
+                        "type": "integer"
+                        },
+                        "description": "Array of corresponding frame numbers from the student video."
+                    },
+                    "feedback": {
+                        "type": "string",
+                        "description": "Detailed feedback on the student's performance (max 100 words)."
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "Short summary of the mistakes."
+                    }
+                },
+                "required": [
+                "teacher_frame",
+                "timestamp",
+                "timestamp_student_range",
+                "student_frames",
+                "feedback",
+                "summary"
+                ]
+            }
+        },
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192
+    }
 
     
 
@@ -93,21 +138,51 @@ def generate_feedback(user_video_name, ref_video_name):
     generation_config=generation_config,
     )
     prompt = (
-        f"You are given two video files:\n"
+        f"You are given two video files and a list of frames:\n"
         f"1. {user_video_name} - A user attempting to replicate dance moves.\n"
-        f"2. {ref_video_name} - The reference dance.\n\n"
-        "Your task is to critique the errors in the first video compared to the reference. "
-        "Only focus on major errors, including but not limited to incorrect moves, off-beat steps, "
-        "and timing issues. List up to 8 key errors with timestamps, descriptions of the error, "
-        "and tips for improvement."
-        "timestamps should be a range for example 0:08-0:10"
+        f"2. {ref_video_name} - The reference dance.\n"
+        f"3. {mismatch} - A list of frames from the reference dance that each contain an array of frames from the user video.\n"
+        "Your task is to provide feedback for each reference frame on how the user frames are different from the reference frames."
+        "The output should be formatted as such: JSON format for each reference frame to show successful analysis and the 100 word max description of how to improve the section. "
+        "A shorter summary of the mistakes should also be added according to the schema"
+        "Add the timestamp up to milliseconds in the video corresponding to the parent frame using 30 frames per second.\n"
+        "Here is example output:\n"
+        """[
+            {
+                "teacher_frame": 55,
+                "timestamp": "00:01:833",
+                "student_frames": [49, 50, 51, 52],
+                "feedback": "The student's arms are not fully extended upwards during the 'up' motion. The student's arm movements are also not as crisp and defined as the teacher's. Lastly, there seems to be some hesitation from the student, as the movements of the student don't match the rhythm and beats of the teacher.",
+                "summary": "Arms not fully extended, movements lack crispness, and timing is slightly off."
+
+            },
+            {
+                "teacher_frame": 56,
+                "timestamp": "00:01:866",
+                "student_frames": [53, 54, 55, 56, 57, 58, 59, 60, 61, 62],
+                "feedback": "While the student completes the bringing-down motion with their arms, the transition from up to down and then back up is slightly slower than the teacher's. This makes the movement appear less fluid and dynamic.  The student should focus on maintaining the pace and energy throughout the sequence. Also, make sure to bend your knees slightly when bringing your arms down.",
+                "summary": "Slightly slower transition and bent knees needed during 'down' motion."
+            },
+            {
+                "teacher_frame": 64,
+                "timestamp": "00:02:133",
+                "student_frames": [72, 73, 74, 75, 76],
+                "feedback": "The student appears to anticipate the upward motion too early.  Start the upward arm movement only when indicated and ensure your arms are fully extended upwards with palms facing each other, as demonstrated by the teacher. The student should also work on the speed of the arm movements to match the rhythm.",
+                "summary": "Anticipating upward motion, arms not fully extended, and inconsistent speed."
+            }
+            ]
+        """
     )
+
+
     print("Uploading files")
     files = [
-    upload_to_gemini("uploads/"+user_video_name, mime_type="video/mp4"),
-    upload_to_gemini('uploads/' + ref_video_name, mime_type="video/mp4"),
+    upload_to_gemini("testDemo/"+user_video_name, mime_type="video/mp4"),
+    upload_to_gemini('testDemo/' + ref_video_name, mime_type="video/mp4"),
+    
     ]
 
+    
 
     wait_for_files_active(files)
 
@@ -120,7 +195,7 @@ def generate_feedback(user_video_name, ref_video_name):
     ])
 
     return response.text
-
+"""
 def test_conn(): 
     generation_config = {
         "temperature": 1,
@@ -141,3 +216,8 @@ def test_conn():
 
     print(response.text)
     return response.text
+"""
+
+mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
+json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
+print(json_return)
