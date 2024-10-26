@@ -53,15 +53,44 @@ function Upload() {
                 console.error('Error', error);
             }
         };
-
-        {/* Fetch data from Flask/Backend */}
-        useEffect(() => {
-        fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
-        .then(data => setData(data))
-      }, []);
     
     // Return method which displays the file upload form
     return (
+    
+        // <div className="bg-gray-50 min-h-screen flex items-center justify-center fill-screen ">
+        //   <div className="relative w-full max-w-lg">
+        //     <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        //     <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        //     <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        //     <div className="m-8 relative space-y-4">
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-48 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-24 h-6 rounded-lg bg-purple-300"></div>
+        //         </div>
+        //       </div>
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-56 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-20 h-6 rounded-lg bg-yellow-300"></div>
+        //         </div>
+        //       </div>
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-44 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-28 h-6 rounded-lg bg-pink-300"></div>
+        //         </div>
+        //       </div>
+        //     </div>
+        //   </div>
+        // </div>
+
     <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
          <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
          <form id="upload-form">
