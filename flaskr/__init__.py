@@ -2,7 +2,7 @@ import os
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from .handle_video import get_mismatch_frames 
+from .handle_video import get_mismatch_frames
 
 from . import gemini_conn
 def create_app(test_config=None):
@@ -52,7 +52,6 @@ def create_app(test_config=None):
         
         mismatch_data = get_mismatch_frames("uploads/" + user_video_name, "uploads/" + ref_video_name)
         return gemini_conn.generate_feedback(user_video_name, ref_video_name, mismatch_data[0])
-
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
