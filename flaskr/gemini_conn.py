@@ -140,8 +140,8 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
 
     print("Uploading files")
     files = [
-    upload_to_gemini("testDemo/"+user_video_name, mime_type="video/mp4"),
-    upload_to_gemini('testDemo/' + ref_video_name, mime_type="video/mp4"),
+    upload_to_gemini("uploads/"+ user_video_name, mime_type="video/mp4"),
+    upload_to_gemini('uploads/' + ref_video_name, mime_type="video/mp4"),
     
     ]
 
