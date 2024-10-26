@@ -152,11 +152,11 @@ function App() {
   Setup();
   const [data, setData] = useState(null);
 
-  {/* Fetch data from Flask/Backend */}
+  {/* Fetch data from Flask/Backend 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
     .then(data => setData(data))
-  }, []);
+  }, []);*/}
 
   return (
     <div className="text-center bg-gray-500 w-screen h-screen rounded">
