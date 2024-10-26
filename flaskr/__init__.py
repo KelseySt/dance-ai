@@ -1,5 +1,5 @@
-import os 
-from flask import Flask, jsonify
+import os
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 
 def create_app(test_config=None):
@@ -11,12 +11,16 @@ def create_app(test_config=None):
     )
     CORS(app)
 
-    #data that's currently sent to the frontend
+    # Home route to render the index.html template
+    @app.route('/')
+    def home():
+        return render_template('index.html')
+
+    # Data endpoint
     @app.route('/api/data')
     def get_data():
-        data = {'message' : 'Hello from Flask!'}
+        data = {'message': 'Hello from Flask!'}
         return jsonify(data)
-    
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -35,7 +39,6 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
-
 
     return app
 
