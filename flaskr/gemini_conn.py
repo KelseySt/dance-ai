@@ -43,43 +43,6 @@ def wait_for_files_active(files, max_retries=10, initial_delay=5):
 
 
 def generate_feedback(user_video_name, ref_video_name, mismatch): 
-    """
-    generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
-        "response_schema": content.Schema(
-            type=content.Type.OBJECT,
-            enum=[],
-            required=["parent_frame", "student_frames", "user_video_name", "ref_video_name", "feedback", "timestamp", "summary"],
-            properties={
-                "parent_frame": content.Schema(
-                    type=content.Type.STRING
-                ),
-                "student_frames": content.Schema(
-                    type=content.Type.ARRAY
-                ),
-                "user_video_name": content.Schema(
-                    type=content.Type.STRING
-                ),
-                "ref_video_name": content.Schema(
-                    type=content.Type.STRING
-                ),
-                "feedback": content.Schema(
-                    type=content.Type.STRING
-                ),
-                "timestamp": content.Schema(
-                    type=content.Type.STRING
-                ),
-                "summary": content.Schema(
-                    type=content.Type.STRING
-                )
-            }
-        ),
-        "response_mime_type": "application/json"
-    }
-    """
     generation_config = {
         "response_mime_type": "application/json",
         "response_schema": { 
@@ -195,31 +158,7 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
     ])
 
     return response.text
-"""
-def test_conn(): 
-    generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-    }
 
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config=generation_config,
-    )
-
-    response = model.generate_content([
-       "test" 
-    ])
-
-    print(response.text)
-    return response.text
-
-# generate_feedback('test_reference.mp4', 'test_student.mp4')
-"""
-
-# mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
-# json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
-# print(json_return)
+#mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
+#json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
+#print(json_return)
