@@ -10,10 +10,14 @@
 }
 
 body {
-    background-color: #FFA500; /* Orange background */
+    background-color: #4E1764; /* Purple background */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+.Upload {
+    text-align: center;
 }
