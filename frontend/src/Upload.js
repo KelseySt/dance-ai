@@ -2,27 +2,15 @@ import './Upload.css';
 import React, { useEffect, useState } from 'react';
 
 function Upload() {
-    const [setData] = useState(null);
-  
-    /* Fetch data from Flask/Backend */
-    useEffect(() => {
-      fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
-      .then(data => setData(data))
-    },);
+        const [data, setData] = useState(null);
 
-        // const [video1text, setVideo1Text] = useState('Reference Video');
         const [refVideo, setrefVideo] = useState('Reference Dance');
 
-        // const [video2text, setVideo2Text] = useState('Your Dance');
         const [userVideo, setuserVideo] = useState('Your Dance');
 
-        // const [video1file, setVideo1File] = useState(null);
         const [refVideoFile, setrefVideoFile] = useState(null);
 
-
-        // const [video2file, setVideo2File] = useState(null);
         const [userVideoFile, setuserVideoFile] = useState(null);
-
 
         // Function to handle file change
         const handleFileChange = (event, setter, fileSetter) => {
@@ -37,23 +25,26 @@ function Upload() {
             event.preventDefault(); //This should prevent the default form submission
             
             const formData = new FormData(); 
-            formData.append('ref_video', refVideoFile);
-            formData.append('user_video', userVideoFile);
+            formData.append('ref_video', refVideoFile);  //Add reference video
+            formData.append('user_video', userVideoFile);//Add user video
+
+            fetch('/api/data', {
+              method: 'POST',
+              body: formData,
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
 
             try {
-                // const response = await fetch('/your-upload-endpoint', { //replace with upload endpoint
-                const response = await fetch('http://127.0.0.1:5000/api/feedback', {
+                const response = await fetch('/api/data', formData, { // Send data to Flask backend
                     method: 'POST',
                     body: formData,
                 });
 
-                fetch('http://127.0.0.1:5000/api/data')
-                .then(response => response.json())
-                .then(data => console.log("Test connection data:", data))
-                .catch(error => console.error("Test connection error:", error));
-
                 if (response.ok) {
-                    console.log("Success:");
+                    const data = await response.json();
+                    console.log("Test connection:", data);
                 } else {
                     console.error("Uploaded failed: ", response.statusText);
                     console.log("Uploading:", refVideoFile, userVideoFile);
@@ -62,8 +53,44 @@ function Upload() {
                 console.error('Error', error);
             }
         };
-
+    
+    // Return method which displays the file upload form
     return (
+    
+        // <div className="bg-gray-50 min-h-screen flex items-center justify-center fill-screen ">
+        //   <div className="relative w-full max-w-lg">
+        //     <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        //     <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        //     <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        //     <div className="m-8 relative space-y-4">
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-48 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-24 h-6 rounded-lg bg-purple-300"></div>
+        //         </div>
+        //       </div>
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-56 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-20 h-6 rounded-lg bg-yellow-300"></div>
+        //         </div>
+        //       </div>
+        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
+        //         <div className="flex-1">
+        //           <div className="h-4 w-44 bg-gray-300 rounded"></div>
+        //         </div>
+        //         <div>
+        //           <div className="w-28 h-6 rounded-lg bg-pink-300"></div>
+        //         </div>
+        //       </div>
+        //     </div>
+        //   </div>
+        // </div>
+
     <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
          <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
          <form id="upload-form">
@@ -85,8 +112,7 @@ function Upload() {
         </form>
     </div>
     );
+
+    return <div>Data: {data}</div>
 }
   export default Upload;
-
-  // When accepting the files from the user, make sure to do it as a form
-  // Use 'Formdata"

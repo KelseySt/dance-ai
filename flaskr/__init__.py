@@ -28,6 +28,26 @@ def create_app(test_config=None):
     def get_data():
         data = {'message': 'Hello from Flask!'}
         return jsonify(data)
+
+    from flask import request, jsonify
+    
+    @app.route('/api/data', methods=['POST'])
+    def handle_file_upload():
+        if 'ref_video' not in request.files or 'user_video' not in request.files:
+            return jsonify({'error': 'No files uploaded'}), 400
+    
+        ref_video_file = request.files['ref_video']
+        user_video_file = request.files['user_video']
+    
+        # Save the files to a directory
+        ref_video_file.save(os.path.join(app.config['UPLOAD_FOLDER'], ref_video_file.filename))
+        user_video_file.save(os.path.join(app.config['UPLOAD_FOLDER'], user_video_file.filename))
+    
+        # Process the files as needed
+        # ...
+    
+        return jsonify({'message': 'Files uploaded successfully'}), 200    
+        
     @app.route('/api/feedback', methods=['GET', 'POST'])
     def get_feedback(): 
         return gemini_conn.generate_feedback('test_reference.mp4', 'test_student.mp4')
