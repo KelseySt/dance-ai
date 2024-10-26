@@ -16,6 +16,3 @@ build/
 .env/
 .env 
 ./frontend/node_modules
-
-*.mp4
-
