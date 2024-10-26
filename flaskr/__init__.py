@@ -11,6 +11,7 @@ def create_app(test_config=None):
     )
     CORS(app)
 
+    #data that's currently sent to the frontend
     @app.route('/api/data')
     def get_data():
         data = {'message' : 'Hello from Flask!'}
