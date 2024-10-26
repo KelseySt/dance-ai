@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import time
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
-from handle_video import get_mismatch_frames
+from .handle_video import get_mismatch_frames
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -220,6 +220,6 @@ def test_conn():
 # generate_feedback('test_reference.mp4', 'test_student.mp4')
 """
 
-mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
-json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
-print(json_return)
+# mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
+# json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
+# print(json_return)

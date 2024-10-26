@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from dtw import calculate
+from .dtw import calculate
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, enable_segmentation=False)
 
@@ -33,7 +33,7 @@ def get_mismatch_frames(student_video_path, ref_video_path):
     mismatched_frames = calculate(stud_ladmarks, ref_landmarks)
     return mismatched_frames 
 
-video_path = '../testDemo/student.mp4'  # Replace with your actual video path
-ref_video_path = '../testDemo/teacher.mp4'
+# video_path = '../testDemo/student.mp4'  # Replace with your actual video path
+# ref_video_path = '../testDemo/teacher.mp4'
 # print(get_mismatch_frames(video_path, ref_video_path))
 
