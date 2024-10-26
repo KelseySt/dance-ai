@@ -50,8 +50,8 @@ def create_app(test_config=None):
         else:
             return 'File type not allowed', 400
         
-        mismatch = get_mismatch_frames(user_video, ref_video)
-        return gemini_conn.generate_feedback(user_video_name, ref_video_name, mismatch)
+        mismatch_data = get_mismatch_frames("uploads/" + user_video_name, "uploads/" + ref_video_name)
+        return gemini_conn.generate_feedback(user_video_name, ref_video_name, mismatch_data[0])
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
