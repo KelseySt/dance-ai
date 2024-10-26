@@ -2,27 +2,15 @@ import './Upload.css';
 import React, { useEffect, useState } from 'react';
 
 function Upload() {
-    const [setData] = useState(null);
-  
-    /* Fetch data from Flask/Backend */
-    useEffect(() => {
-      fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
-      .then(data => setData(data))
-    },);
+        const [data, setData] = useState(null);
 
-        // const [video1text, setVideo1Text] = useState('Reference Video');
         const [refVideo, setrefVideo] = useState('Reference Dance');
 
-        // const [video2text, setVideo2Text] = useState('Your Dance');
         const [userVideo, setuserVideo] = useState('Your Dance');
 
-        // const [video1file, setVideo1File] = useState(null);
         const [refVideoFile, setrefVideoFile] = useState(null);
 
-
-        // const [video2file, setVideo2File] = useState(null);
         const [userVideoFile, setuserVideoFile] = useState(null);
-
 
         // Function to handle file change
         const handleFileChange = (event, setter, fileSetter) => {
@@ -37,23 +25,26 @@ function Upload() {
             event.preventDefault(); //This should prevent the default form submission
             
             const formData = new FormData(); 
-            formData.append('ref_video', refVideoFile);
-            formData.append('user_video', userVideoFile);
+            formData.append('ref_video', refVideoFile);  //Add reference video
+            formData.append('user_video', userVideoFile);//Add user video
+
+            fetch('/api/data', {
+              method: 'POST',
+              body: formData,
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
 
             try {
-                // const response = await fetch('/your-upload-endpoint', { //replace with upload endpoint
-                const response = await fetch('http://127.0.0.1:5000/api/feedback', {
+                const response = await fetch('/api/data', formData, { // Send data to Flask backend
                     method: 'POST',
                     body: formData,
                 });
 
-                fetch('http://127.0.0.1:5000/api/data')
-                .then(response => response.json())
-                .then(data => console.log("Test connection data:", data))
-                .catch(error => console.error("Test connection error:", error));
-
                 if (response.ok) {
-                    console.log("Success:");
+                    const data = await response.json();
+                    console.log("Test connection:", data);
                 } else {
                     console.error("Uploaded failed: ", response.statusText);
                     console.log("Uploading:", refVideoFile, userVideoFile);
@@ -63,6 +54,13 @@ function Upload() {
             }
         };
 
+        {/* Fetch data from Flask/Backend */}
+        useEffect(() => {
+        fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
+        .then(data => setData(data))
+      }, []);
+    
+    // Return method which displays the file upload form
     return (
     <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
          <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
@@ -85,8 +83,7 @@ function Upload() {
         </form>
     </div>
     );
+
+    return <div>Data: {data}</div>
 }
   export default Upload;
-
-  // When accepting the files from the user, make sure to do it as a form
-  // Use 'Formdata"
