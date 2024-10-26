@@ -1,5 +1,6 @@
 import os 
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 def create_app(test_config=None):
     # create and configure the app
@@ -8,6 +9,13 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+    CORS(app)
+
+    @app.route('/api/data')
+    def get_data():
+        data = {'message' : 'Hello from Flask!'}
+        return jsonify(data)
+    
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -27,4 +35,8 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
+
     return app
+
+if __name__ == '__main__':
+    app.run(debug=True)
