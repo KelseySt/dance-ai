@@ -7,11 +7,11 @@ from fastdtw import fastdtw
 def calculate(X, Y): 
     distance, path = fastdtw(X, Y, dist=2)
     print(path)
-    val = one_to_many_mapping(2, path)
-    print(val)
-    return val 
+    val1 = stu_to_ref(2, path)
+    val2 = ref_to_stu(2, path)
+    return val1 , val2
     
-def one_to_many_mapping(threshold, path):
+def stu_to_ref(threshold, path):
     dict = {}
     for pair in path: 
         if pair[0] in dict: 
@@ -26,9 +26,16 @@ def one_to_many_mapping(threshold, path):
 
     return mismatch_pairs  
 
+def ref_to_stu(threshold, path): 
+    result = {}
+    for first, second in path:
+        if second not in result:
+            result[second] = []  # Initialize the list if key doesn't exist
+        result[second].append(first)  # Append the first value to the list
+    mismatch_pairs = {}
+    for key, value in result.items(): 
+       if len(value) > threshold: 
+           mismatch_pairs[key] = value
 
-# from fastdtw import fastdtw
-# from scipy.spatial.distance import euclidean
-# series_1 = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
-# series_2 = np.array([[2, 3], [3, 4], [4, 5]])
-# calculate(series_1, series_2)
+    return mismatch_pairs  
+
