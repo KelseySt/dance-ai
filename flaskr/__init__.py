@@ -1,5 +1,5 @@
-import os 
-from flask import Flask, jsonify, request
+import os
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
@@ -18,12 +18,16 @@ def create_app(test_config=None):
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-    #data that's currently sent to the frontend
+    # Home route to render the index.html template
+    @app.route('/')
+    def home():
+        return render_template('index.html')
+
+    # Data endpoint
     @app.route('/api/data')
     def get_data():
-        data = {'message' : 'Hello from Flask!'}
+        data = {'message': 'Hello from Flask!'}
         return jsonify(data)
-    
     @app.route('/api/feedback', methods=['GET', 'POST'])
     def get_feedback(): 
         return gemini_conn.generate_feedback('test_reference.mp4', 'test_student.mp4')
@@ -64,7 +68,6 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
-
 
     return app
 
