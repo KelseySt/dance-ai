@@ -1,10 +1,8 @@
 import './App.css';
-import React, { useEffect, useState, Component} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import BlackBar from './components/BlackBar.js';
 import ClickableSegment from './components/ClickableSegment.js';
 import ReactPlayer from 'react-player';
-import { useLocation } from 'react-router-dom';
-
 
 let numOfTimestamps;
 let timestampRanges;
@@ -22,10 +20,12 @@ let setInfoboxImprovement;
 let timestampArr;
 let progressValue;
 let setProgressValue;
+let playerRef;
 
 
 
-function handleClick(position, timestamp, feedback, improvement) {
+function handleClick(position, timestamp, feedback, improvement, seekValue) {
+  playerRef.current.seekTo(seekValue, 'fraction');
   setShowInfobox(true);
   setInfoboxPosition(position);
   setInfoboxTimestamp(timestamp);
@@ -72,7 +72,8 @@ function ProgressBarComponent({ progressValue }) {
                       Math.round(progressToMs(second, totalLength))
                     ),
                   feedback,
-                  improvement
+                  improvement,
+                  clickPosition/100
                 )
               }
             />
@@ -83,14 +84,17 @@ function ProgressBarComponent({ progressValue }) {
   );
 }
 
-function VideoComponent({ title , url = "http://localhost:3000/student.mp4"}) {
+function VideoComponent({ title , url = "./student.mp4" }) {
+  playerRef = useRef(null);
+
   return (
-    <div 
-      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2 
-             flex flex-col items-center" 
+    <div
+      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
     >
-      <div className="w-full h-full" style={{ paddingTop: "56.25%", position: "relative" }}> 
-        <ReactPlayer url={url} controls={true} width="100%" height="100%"  style={{ top: "0", position: "absolute", left: "0" }}/>
+      <div className="w-full h-full" style={{ paddingTop: "56.25%", position: "relative" }}>  
+        <ReactPlayer ref={playerRef} url={url} width="100%" height="100%" controls={true}    style={{ top: "0", position: "absolute", left: "0" }} onProgress={(progress) => {
+            setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+          }} /> 
       </div>
     </div>
   );

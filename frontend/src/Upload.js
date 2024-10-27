@@ -1,6 +1,5 @@
 import './Upload.css';
 import React, { useEffect, useState } from 'react';
-import {useNavigate} from 'react-router-dom'
 
 function Upload(props) {
 
@@ -31,8 +30,8 @@ function Upload(props) {
             event.preventDefault(); //This should prevent the default form submission
             
             const formData = new FormData(); 
-            formData.append('ref_video', refVideoFile);
-            formData.append('user_video', userVideoFile);
+            if (refVideoFile) formData.append('ref_video', refVideoFile);
+            if (userVideoFile) formData.append('user_video', userVideoFile);
 
             try {
                 console.log(formData)
@@ -55,30 +54,29 @@ function Upload(props) {
             }
         };
     return (
-    
-    <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
-         <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
-         <form id="upload-form" onSubmit={handleSubmit}>
-            <label htmlFor="refVideo" className="block bg-gray-200 border-2 border-dashed border-gray-400 rounded-[15px] my-2 p-4 text-gray-800 cursor-pointer transition-colors duration-300 hover:bg-gray-300">
-             {refVideo}
-                 <input type="file" id="refVideo" name="refVideo" accept="video/*" required className="hidden" 
-                onChange={(e) => handleFileChange(e, setrefVideo, setrefVideoFile)}
-                handleSubmit/>
-            </label>
-            <label htmlFor="userVideoFile" className="block bg-gray-200 border-2 border-dashed border-gray-400 rounded-[15px]  my-2 p-4 text-gray-800 cursor-pointer transition-colors duration-300 hover:bg-gray-300">
-            {userVideo}                                  
-                <input type="file" id="userVideoFile" name="userVideoFile" accept="video/*" required className="hidden" 
-                onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
-                handleSubmit/>
-            </label>
-            <button type="submit" className="block bg-green-500 text-white border-none py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">
-                Upload Videos
-            </button>
-        </form>
-    </div>
-    );
-}
-  export default Upload;
-
-  // When accepting the files from the user, make sure to do it as a form
-  // Use 'Formdata"
+        <div className="bg-orange-200 flex items-center justify-center h-screen w-screen">
+            <div className="absolute w-96 h-96 scale-125 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div className="absolute w-96 h-96 scale-125 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob"></div>
+            <div className="absolute w-96 h-96 scale-125 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000"></div>
+            <div class="absolute bg-transparent scale-125 p-3 rounded-[30px] w-[350px] opacity-100 text-center shadow-2xl">
+                <h2 className="text-[2em] mb-[15px] text-white">Upload Your Videos</h2>
+                <form id="upload-form">
+                <label for="refVideo" class="block bg-rose-200 border-2 border-white rounded-[15px] my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
+                {refVideo}
+                <input type="file" id="refVideo" name="refVideo" accept="video/*" required className="hidden"
+                        onChange={(e) => handleFileChange(e, setrefVideo, setrefVideoFile)}
+                        handleSubmit/>
+                        </label>
+                <label for="userVideo" class="block bg-rose-200 border-2 border-white rounded-[15px] my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
+                {userVideo}                                  
+                <input type="file" id="userVideo" name="userVideo" accept="video/*" required className="hidden"
+                        onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
+                        handleSubmit/>
+                        </label>
+                    <button type="submit" class="block bg-green-500 text-white py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">Upload Videos</button>
+                </form>
+        </div>
+        </div>
+        );
+   }
+     export default Upload;
