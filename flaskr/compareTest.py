@@ -158,7 +158,7 @@ def detect_differences(teacher_keypoints, student_keypoints, teacher_start_frame
             differing_frames.append(i)
     return differing_frames
 
-def process_videos(teacher_video_path, student_video_path, output_path="processed_output.mp4"):
+def process_videos(teacher_video_path, student_video_path, output_path="./frontend/public/processed_video.mp4"):
     teacher_keypoints = extract_keypoints(teacher_video_path)
     student_keypoints = extract_keypoints(student_video_path)
     
