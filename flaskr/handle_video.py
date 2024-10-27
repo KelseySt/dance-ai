@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from .dtw import calculate
+from dtw import calculate
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False, model_complexity=1, enable_segmentation=False)
 
