@@ -1,9 +1,8 @@
 import './App.css';
-import React, { useEffect, useState, Component} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import BlackBar from './components/BlackBar.js';
 import ClickableSegment from './components/ClickableSegment.js';
 import ReactPlayer from 'react-player';
-
 
 let numOfTimestamps;
 let timestampRanges;
@@ -82,15 +81,14 @@ function ProgressBarComponent({ progressValue }) {
   );
 }
 
-function VideoComponent({ title , url = "http://localhost:3000/student.mp4"}) {
+function VideoComponent({ title , url = "	https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"}) {
   return (
-    <div 
-      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2 
-             flex flex-col items-center" 
+    <div
+      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
     >
-      <div className="w-full h-full" style={{ paddingTop: "56.25%", position: "relative" }}> 
-        <ReactPlayer url={url} controls={true} width="100%" height="100%"  style={{ top: "0", position: "absolute", left: "0" }}/>
-      </div>
+      <ReactPlayer url={url} width="100%" height="100%" controls={true}  onProgress={(progress) => {
+          setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+        }} /> 
     </div>
   );
 }
