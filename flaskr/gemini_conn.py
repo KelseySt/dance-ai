@@ -137,13 +137,16 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
         """
     )
 
+
     print("Uploading files")
     files = [
-        upload_to_gemini("uploads/"+user_video_name, mime_type="video/mp4"),
-        upload_to_gemini('uploads/' + ref_video_name, mime_type="video/mp4"),
+    upload_to_gemini("uploads/"+user_video_name, mime_type="video/mp4"),
+    upload_to_gemini('uploads/' + ref_video_name, mime_type="video/mp4"),
+    
     ]
 
     wait_for_files_active(files)
+
 
     print(prompt)
     response = model.generate_content([
@@ -153,3 +156,7 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
     ])
 
     return response.text
+
+#mismatch = get_mismatch_frames("testDemo/"+"student.mp4", 'testDemo/' + "teacher.mp4")
+#json_return = generate_feedback("student.mp4", "teacher.mp4", mismatch)
+#print(json_return)
