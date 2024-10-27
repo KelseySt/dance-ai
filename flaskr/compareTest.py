@@ -174,8 +174,7 @@ def process_videos(teacher_video_path, student_video_path, output_path="./fronte
     cap_student = cv2.VideoCapture(student_video_path)
 
     cap_teacher.set(cv2.CAP_PROP_POS_FRAMES, teacher_start_frame)
-    print("Teacher start: ")
-    print(teacher_start_frame)
+    
     cap_student.set(cv2.CAP_PROP_POS_FRAMES, student_start_frame)
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -223,4 +222,4 @@ def process_videos(teacher_video_path, student_video_path, output_path="./fronte
     out.release()
     print(f"Processed video saved to {output_path}")
 
-process_videos("./testDemo/teacher1.mp4", "./testDemo/student2.3.mp4")
+#process_videos("./testDemo/teacher1.mp4", "./testDemo/student2.3.mp4")
