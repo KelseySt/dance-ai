@@ -2,15 +2,7 @@ import './Upload.css';
 import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 
-function Upload() {
-    const [setData] = useState(null);
-    const navigate = useNavigate(); 
-
-    /* Fetch data from Flask/Backend */
-    useEffect(() => {
-      fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
-      .then(data => setData(data))
-    },);
+function Upload(props) {
 
         // const [video1text, setVideo1Text] = useState('Reference Video');
         const [refVideo, setrefVideo] = useState('Reference Dance');
@@ -43,19 +35,17 @@ function Upload() {
             formData.append('user_video', userVideoFile);
 
             try {
+                console.log(formData)
+                
                 // const response = await fetch('/your-upload-endpoint', { //replace with upload endpoint
                 const response = await fetch('http://127.0.0.1:5000/api/feedback', {
                     method: 'POST',
                     body: formData,
                 });
-
-                fetch('http://127.0.0.1:5000/api/data')
-                .then(response => response.json())
-                .then(data => console.log("Test connection data:", data))
-                .catch(error => console.error("Test connection error:", error));
-
                 if (response.ok) {
-                    console.log("Success:");
+                    const json_response = await response.json()
+                    console.log(json_response)
+                    props.setResponse(json_response)
                 } else {
                     console.error("Uploaded failed: ", response.statusText);
                     console.log("Uploading:", refVideoFile, userVideoFile);
@@ -63,14 +53,12 @@ function Upload() {
             } catch(error) {
                 console.error('Error', error);
             }
-            navigate('/video-feedback', {state: {json_response:response}})
         };
-
     return (
     
     <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
          <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
-         <form id="upload-form">
+         <form id="upload-form" onSubmit={handleSubmit}>
             <label htmlFor="refVideo" className="block bg-gray-200 border-2 border-dashed border-gray-400 rounded-[15px] my-2 p-4 text-gray-800 cursor-pointer transition-colors duration-300 hover:bg-gray-300">
              {refVideo}
                  <input type="file" id="refVideo" name="refVideo" accept="video/*" required className="hidden" 

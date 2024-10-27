@@ -145,32 +145,26 @@ function InfoboxComponent({ timestamp, feedback, improvement }) {
   );
 }
 
-function App() {
-  Setup();
+function App(props) {
+  console.log(props.response)
+  Setup(props.response);
   const [data, setData] = useState(null);
 
   return (
-    <>
-    <Router>
-      <Routes>
-        <Route path='/video-feedback' element={<App/>}/>
-      </Routes>
-    </Router>
-
-    <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
+        <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
       <div className="bg-[#221833] app-body h-screen w-auto grid grid-rows-5 justify-items-center rounded">
         <TopComponent />
         <BottomComponent progressValue={progressValue}/>
       </div>
     </div>
-    </>
   );
 }
 
 export default App;
 
-function Setup() {
-  numOfTimestamps = jsonData.length;
+function Setup(data) {
+  data = JSON.parse(data)
+  numOfTimestamps = data.length;
   [timestampRanges, setTimestampRanges] = useState(
     Array(numOfTimestamps).fill([null, null, null, null, null, null])
   );
@@ -181,11 +175,9 @@ function Setup() {
   [infoboxImprovement, setInfoboxImprovement] = useState(null);
   [progressValue, setProgressValue] = useState(0); 
 
-  timestampArr = parseFeedback(jsonData);
-  const location = useLocation(); 
-  const {data} = location.state || {}; 
+  timestampArr = parseFeedback(data);
   useEffect(() => {
-    const updatedRanges = parseFeedback(data.json_response).map(
+    const updatedRanges = parseFeedback(data).map(
       ([totalLength, start, end, feedback, improvement]) => {
         const first = msToProgress(start, totalLength);
         const second = msToProgress(end, totalLength);
@@ -232,6 +224,8 @@ function parseTimestamp(timeStr) {
 }
 
 function parseFeedback(jsonData) {
+  console.log(jsonData)
+  console.log(typeof jsonData)
   return jsonData.map(({ feedback, summary, timestamp_student_range }) => {
     const [startStr, endStr] = timestamp_student_range.split('-');
     const start = parseTimestamp(startStr);
@@ -241,25 +235,3 @@ function parseFeedback(jsonData) {
   });
 }
 
-const jsonData = [
-  {
-    feedback:
-      "The student's arms are not fully extended upwards during the 'up' motion. The student's arm movements are also not as crisp and defined as the teacher's. Lastly, there seems to be some hesitation from the student, as the movements of the student don't match the rhythm and beats of the teacher.",
-    student_frames: [49, 50, 51, 52],
-    summary:
-      'Arms not fully extended, movements lack crispness, and timing is slightly off.',
-    teacher_frame: 55,
-    timestamp: '00:01:833',
-    timestamp_student_range: '00:01:633-00:01:666',
-  },
-  {
-    feedback:
-      "While the student completes the bringing-down motion with their arms, the transition from up to down and then back up is slightly slower than the teacher's. This makes the movement appear less fluid and dynamic.  The student should focus on maintaining the pace and energy throughout the sequence. Also, make sure to bend your knees slightly when bringing your arms down.",
-    student_frames: [53, 54, 55, 56, 57, 58, 59, 60, 61, 62],
-    summary:
-      'Slightly slower transition and bent knees needed during "down" motion.',
-    teacher_frame: 56,
-    timestamp: '00:01:866',
-    timestamp_student_range: '00:01:766-00:01:933',
-  },
-];
