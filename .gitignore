@@ -19,5 +19,3 @@ build/
 
 *.mp4
 
-./test*
-./flaskr/test*

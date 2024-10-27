@@ -2,7 +2,6 @@ import os
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from .handle_video import get_mismatch_frames
 
 from . import gemini_conn
 def create_app(test_config=None):
@@ -29,9 +28,29 @@ def create_app(test_config=None):
     def get_data():
         data = {'message': 'Hello from Flask!'}
         return jsonify(data)
+
+    from flask import request, jsonify
+    
+    @app.route('/api/data', methods=['POST'])
+    def handle_file_upload():
+        if 'ref_video' not in request.files or 'user_video' not in request.files:
+            return jsonify({'error': 'No files uploaded'}), 400
+    
+        ref_video_file = request.files['ref_video']
+        user_video_file = request.files['user_video']
+    
+        # Save the files to a directory
+        ref_video_file.save(os.path.join(app.config['UPLOAD_FOLDER'], ref_video_file.filename))
+        user_video_file.save(os.path.join(app.config['UPLOAD_FOLDER'], user_video_file.filename))
+    
+        # Process the files as needed
+        # ...
+    
+        return jsonify({'message': 'Files uploaded successfully'}), 200    
+        
     @app.route('/api/feedback', methods=['GET', 'POST'])
     def get_feedback(): 
-        # return gemini_conn.generate_feedback('test_reference.mp4', 'test_student.mp4')
+        return gemini_conn.generate_feedback('test_reference.mp4', 'test_student.mp4')
 
         if 'ref_video' not in request.files or 'user_video' not in request.files:
             return 'No file part', 400
@@ -50,8 +69,7 @@ def create_app(test_config=None):
         else:
             return 'File type not allowed', 400
         
-        mismatch_data = get_mismatch_frames("uploads/" + user_video_name, "uploads/" + ref_video_name)
-        return gemini_conn.generate_feedback(user_video_name, ref_video_name, mismatch_data[0], mismatch_data[1])
+        return gemini_conn.generate_feedback(user_video_name, ref_video_name)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
