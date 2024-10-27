@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from .handle_video import get_mismatch_frames
+from .compareTest import process_videos
 
 from . import gemini_conn
 def create_app(test_config=None):
@@ -52,6 +53,7 @@ def create_app(test_config=None):
         
         mismatch_data = get_mismatch_frames("uploads/" + user_video_name, "uploads/" + ref_video_name)
         ai_answer = gemini_conn.generate_feedback(user_video_name, ref_video_name, mismatch_data[0], mismatch_data[1])
+        process_videos("uploads/" + ref_video_name, "uploads/" + user_video_name)
         return jsonify(ai_answer)
 
     if test_config is None:
