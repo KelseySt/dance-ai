@@ -21,11 +21,13 @@ let timestampArr;
 let progressValue;
 let setProgressValue;
 let playerRef;
+let isPlayerReady;
+let setIsPlayerReady;
 
 
 
 function handleClick(position, timestamp, feedback, improvement, seekValue) {
-  playerRef.current.seekTo(seekValue, 'fraction');
+  playerRef.current.seekTo(seekValue/100, 'fraction');
   setShowInfobox(true);
   setInfoboxPosition(position);
   setInfoboxTimestamp(timestamp);
@@ -34,15 +36,16 @@ function handleClick(position, timestamp, feedback, improvement, seekValue) {
 }
 
 function PairOfBoxes({ firstPosition, secondPosition, onClick }) {
+  const totalDuration =  playerRef.current.getDuration() * 10;
   return (
     <>
-      <BlackBar progress={firstPosition} />
+      <BlackBar progress={firstPosition/totalDuration} />
       <ClickableSegment
-        position={firstPosition}
-        distance={secondPosition - firstPosition}
+        position={firstPosition/totalDuration}
+        distance={(secondPosition - firstPosition)/totalDuration}
         onClick={onClick}
       />
-      <BlackBar progress={secondPosition} />
+      <BlackBar progress={secondPosition/totalDuration} />
     </>
   );
 }
@@ -65,15 +68,15 @@ function ProgressBarComponent({ progressValue }) {
                 handleClick(
                   clickPosition,
                   secondFormat(
-                    Math.round(progressToMs(first, totalLength))
+                    Math.round(first)
                   ) +
                     " - " +
                     secondFormat(
-                      Math.round(progressToMs(second, totalLength))
+                      Math.round(second)
                     ),
                   feedback,
                   improvement,
-                  clickPosition/100
+                  first/(playerRef.current.getDuration() * 10)
                 )
               }
             />
@@ -84,23 +87,35 @@ function ProgressBarComponent({ progressValue }) {
   );
 }
 
-function VideoComponent({ title , url = "./student.mp4" }) {
+function VideoComponent({ title , url = "./student.mp4"}) {
+  const [duration, setDuration] = useState(0);
   playerRef = useRef(null);
+
+  useEffect(() => {
+    if (playerRef.current) {
+      // Notify parent that the player is ready
+      setIsPlayerReady(true);
+    }
+  }, [playerRef.current]);
 
   return (
     <div
       className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
     >
       <div className="w-full h-full" style={{ paddingTop: "56.25%", position: "relative" }}>  
-        <ReactPlayer ref={playerRef} url={url} width="100%" height="100%" controls={true}    style={{ top: "0", position: "absolute", left: "0" }} onProgress={(progress) => {
+        <ReactPlayer ref={playerRef} url={url} width="100%" height="100%" controls={true} style={{ top: "0", position: "absolute", left: "0" }} 
+          onProgress={(progress) => {
             setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+          }} 
+          onDuration={(duration) => {
+            setDuration(duration);
           }} /> 
       </div>
     </div>
   );
 }
 
-function TopComponent() {
+function TopComponent(setIsPlayerReady) {
   useEffect(() => {
     // This effect will run whenever showInfobox changes
   }, [showInfobox]);
@@ -116,7 +131,8 @@ function TopComponent() {
           />
         ) : null}
       </div>
-      <VideoComponent title="Student" />
+      <VideoComponent title="Student"/>
+
     </div>
   );
 }
@@ -153,12 +169,13 @@ function App(props) {
   console.log(props.response)
   Setup(props.response);
   const [data, setData] = useState(null);
+  [isPlayerReady, setIsPlayerReady] = useState(false);
 
   return (
         <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
       <div className="bg-[#221833] app-body h-screen w-auto grid grid-rows-5 justify-items-center rounded">
-        <TopComponent />
-        <BottomComponent progressValue={progressValue}/>
+        <TopComponent/>
+        {isPlayerReady && <BottomComponent progressValue={progressValue} />}
       </div>
     </div>
   );
@@ -167,7 +184,7 @@ function App(props) {
 export default App;
 
 function Setup(data) {
-  data = JSON.parse(data)
+  data = JSON.parse(data);
   numOfTimestamps = data.length;
   [timestampRanges, setTimestampRanges] = useState(
     Array(numOfTimestamps).fill([null, null, null, null, null, null])
@@ -183,8 +200,8 @@ function Setup(data) {
   useEffect(() => {
     const updatedRanges = parseFeedback(data).map(
       ([totalLength, start, end, feedback, improvement]) => {
-        const first = msToProgress(start, totalLength);
-        const second = msToProgress(end, totalLength);
+        const first = start;
+        const second = end;
         const clickPosition = (first + second) / 2;
         return [totalLength, first, second, clickPosition, feedback, improvement];
       }
@@ -234,7 +251,7 @@ function parseFeedback(jsonData) {
     const [startStr, endStr] = timestamp_student_range.split('-');
     const start = parseTimestamp(startStr);
     const end = parseTimestamp(endStr);
-    const totalLength = 5000;
+    const totalLength = end + 1000;
     return [totalLength, start, end, feedback, summary];
   });
 }
