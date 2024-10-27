@@ -1,11 +1,12 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import BlackBar from './components/BlackBar.js';
 import ClickableSegment from './components/ClickableSegment.js';
+import ReactPlayer from 'react-player';
 
 let numOfTimestamps;
 let timestampRanges;
-let showInfobox;
+let showInfobox;  
 let infoboxPosition;
 let infoboxTimestamp;
 let infoboxFeedback;
@@ -17,6 +18,10 @@ let setInfoboxTimestamp;
 let setInfoboxFeedback;
 let setInfoboxImprovement;
 let timestampArr;
+let progressValue;
+let setProgressValue;
+
+
 
 function handleClick(position, timestamp, feedback, improvement) {
   setShowInfobox(true);
@@ -76,12 +81,14 @@ function ProgressBarComponent({ progressValue }) {
   );
 }
 
-function VideoComponent({ title }) {
+function VideoComponent({ title , url = "	https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"}) {
   return (
     <div
-      className="bg-[#333] w-11/12 justify-items-center mx-3 my-10 border border-gray-600 rounded col-span-1 hover:border-blue-500 transition-all duration-300 ease-in-out"
+      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
     >
-      <h2 className="text-lg font-bold text-gray-300">{title} Video</h2>
+      <ReactPlayer url={url} width="100%" height="100%" controls={true}  onProgress={(progress) => {
+          setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+        }} /> 
     </div>
   );
 }
@@ -103,15 +110,14 @@ function TopComponent() {
         ) : null}
       </div>
       <VideoComponent title="Student" />
-      <VideoComponent title="Teacher" />
     </div>
   );
 }
 
-function BottomComponent() {
+function BottomComponent( { progressValue }) {
   return (
     <div className="bg-[#392850] flex items-center grid grid-row-3 w-full row-span-1 border border-gray-600">
-      <ProgressBarComponent progressValue="90" />
+      <ProgressBarComponent progressValue={progressValue} />
     </div>
   );
 }
@@ -129,7 +135,7 @@ function InfoboxComponent({ timestamp, feedback, improvement }) {
       <p className="text-lg text-gray-400">{feedback}</p>
 
       <h2 className="text-lg font-bold text-gray-300 underline">
-        Improvement:
+        Summary:
       </h2>
       <p className="text-lg text-gray-400">{improvement}</p>
     </div>
@@ -144,7 +150,7 @@ function App() {
     <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
       <div className="bg-[#221833] app-body h-screen w-auto grid grid-rows-5 justify-items-center rounded">
         <TopComponent />
-        <BottomComponent />
+        <BottomComponent progressValue={progressValue}/>
       </div>
     </div>
   );
@@ -162,6 +168,7 @@ function Setup() {
   [infoboxTimestamp, setInfoboxTimestamp] = useState(null);
   [infoboxFeedback, setInfoboxFeedback] = useState(null);
   [infoboxImprovement, setInfoboxImprovement] = useState(null);
+  [progressValue, setProgressValue] = useState(0); 
 
   timestampArr = parseFeedback(jsonData);
 
