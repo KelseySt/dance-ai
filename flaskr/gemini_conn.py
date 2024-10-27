@@ -42,7 +42,7 @@ def wait_for_files_active(files, max_retries=10, initial_delay=5):
 
 
 
-def generate_feedback(user_video_name, ref_video_name, mismatch): 
+def generate_feedback(user_video_name, ref_video_name, mismatch, mismatch2): 
     generation_config = {
         "response_mime_type": "application/json",
         "response_schema": { 
@@ -104,15 +104,16 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
         f"You are given two video files and a list of frames:\n"
         f"1. {user_video_name} - A user attempting to replicate dance moves.\n"
         f"2. {ref_video_name} - The reference dance.\n"
-        f"3. {mismatch} - A list of frames from the reference dance that each contain an array of frames from the user video.\n"
-        "Your task is to provide feedback for each reference frame on how the user frames are different from the reference frames."
+        f"3. {mismatch} - A key-value datastructure where the key is a frame from the reference dance and the value is an array of frames from the user video.\n"
+        f"4. {mismatch2} -A key-value datastructure where the key is a frame from the user dance and the value is an array of frames from the reference video.\n" 
+        "Your task is to provide feedback for each key frame from both key-value datastructe on how the array of frames are different from the dance move done in the frames near the key frame"
         "The output should be formatted as such: JSON format for each reference frame to show successful analysis and the 100 word max description of how to improve the section. "
         "A shorter summary of the mistakes should also be added according to the schema"
         "Add the timestamp up to milliseconds in the video corresponding to the parent frame using 30 frames per second.\n"
         "Here is example output:\n"
         """[
             {
-                "teacher_frame": 55,
+                "teacher_frame": [55],
                 "timestamp": "00:01:833",
                 "student_frames": [49, 50, 51, 52],
                 "feedback": "The student's arms are not fully extended upwards during the 'up' motion. The student's arm movements are also not as crisp and defined as the teacher's. Lastly, there seems to be some hesitation from the student, as the movements of the student don't match the rhythm and beats of the teacher.",
@@ -120,16 +121,16 @@ def generate_feedback(user_video_name, ref_video_name, mismatch):
 
             },
             {
-                "teacher_frame": 56,
+                "teacher_frame": [56],
                 "timestamp": "00:01:866",
                 "student_frames": [53, 54, 55, 56, 57, 58, 59, 60, 61, 62],
                 "feedback": "While the student completes the bringing-down motion with their arms, the transition from up to down and then back up is slightly slower than the teacher's. This makes the movement appear less fluid and dynamic.  The student should focus on maintaining the pace and energy throughout the sequence. Also, make sure to bend your knees slightly when bringing your arms down.",
                 "summary": "Slightly slower transition and bent knees needed during 'down' motion."
             },
             {
-                "teacher_frame": 64,
+                "teacher_frame": [64, 65, 67, 68],
                 "timestamp": "00:02:133",
-                "student_frames": [72, 73, 74, 75, 76],
+                "student_frames": [72],
                 "feedback": "The student appears to anticipate the upward motion too early.  Start the upward arm movement only when indicated and ensure your arms are fully extended upwards with palms facing each other, as demonstrated by the teacher. The student should also work on the speed of the arm movements to match the rhythm.",
                 "summary": "Anticipating upward motion, arms not fully extended, and inconsistent speed."
             }
