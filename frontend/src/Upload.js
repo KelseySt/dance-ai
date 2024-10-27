@@ -55,62 +55,34 @@ function Upload() {
         };
     
     // Return method which displays the file upload form
+    //change text to white
+    //add a box shadow to the card
     return (
-    
-        // <div className="bg-gray-50 min-h-screen flex items-center justify-center fill-screen ">
-        //   <div className="relative w-full max-w-lg">
-        //     <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        //     <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        //     <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-        //     <div className="m-8 relative space-y-4">
-        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
-        //         <div className="flex-1">
-        //           <div className="h-4 w-48 bg-gray-300 rounded"></div>
-        //         </div>
-        //         <div>
-        //           <div className="w-24 h-6 rounded-lg bg-purple-300"></div>
-        //         </div>
-        //       </div>
-        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
-        //         <div className="flex-1">
-        //           <div className="h-4 w-56 bg-gray-300 rounded"></div>
-        //         </div>
-        //         <div>
-        //           <div className="w-20 h-6 rounded-lg bg-yellow-300"></div>
-        //         </div>
-        //       </div>
-        //       <div className="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
-        //         <div className="flex-1">
-        //           <div className="h-4 w-44 bg-gray-300 rounded"></div>
-        //         </div>
-        //         <div>
-        //           <div className="w-28 h-6 rounded-lg bg-pink-300"></div>
-        //         </div>
-        //       </div>
-        //     </div>
-        //   </div>
-        // </div>
-
-    <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
-         <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
-         <form id="upload-form">
-            <label htmlFor="refVideo" className="block bg-gray-200 border-2 border-dashed border-gray-400 rounded-[15px] my-2 p-4 text-gray-800 cursor-pointer transition-colors duration-300 hover:bg-gray-300">
-             {refVideo}
-                 <input type="file" id="refVideo" name="refVideo" accept="video/*" required className="hidden" 
-                onChange={(e) => handleFileChange(e, setrefVideo, setrefVideoFile)}
-                handleSubmit/>
-            </label>
-            <label htmlFor="userVideoFile" className="block bg-gray-200 border-2 border-dashed border-gray-400 rounded-[15px]  my-2 p-4 text-gray-800 cursor-pointer transition-colors duration-300 hover:bg-gray-300">
-            {userVideo}                                  
-                <input type="file" id="userVideoFile" name="userVideoFile" accept="video/*" required className="hidden" 
-                onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
-                handleSubmit/>
-            </label>
-            <button type="submit" className="block bg-green-500 text-white border-none py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">
-                Upload Videos
-            </button>
-        </form>
-    </div>
+    <div className='bg-orange-200 flex items-center justify-center h-screen w-screen'> 
+            <div className='absolute w-96 h-96 scale-150 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-2000'></div>
+            <div className='absolute w-96 h-96 scale-150 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opactiy-50 animate-blob'></div>
+            <div className='absolute w-96 h-96 scale-150 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000'></div>
+                <div className="left-1/2 top-1 -translate-x-1/2 bg-transparent scale-125 p-3 rounded-[30px] w-[350px] opacity-100 text-center shadow-2xl">
+                <h2 className="text-[2em] mb-[15px] text-white">Upload Your Videos</h2>
+                <form id="upload-form">
+                    <label htmlFor="refVideo" className="block bg-rose-200 border-2 border-white rounded-[15px] my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
+                    {refVideo}
+                        <input type="file" id="refVideo" name="refVideo" accept="video/*" required className="hidden" 
+                        onChange={(e) => handleFileChange(e, setrefVideo, setrefVideoFile)}
+                        handleSubmit/>
+                    </label>
+                    <label htmlFor="userVideoFile" className="block bg-rose-200 border-2 border-white rounded-[15px]  my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
+                    {userVideo}                                  
+                        <input type="file" id="userVideoFile" name="userVideoFile" accept="video/*" required className="hidden" 
+                        onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
+                        handleSubmit/>
+                    </label>
+                    <button type="submit" className="block bg-green-500 border-white text-white py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">
+                        Upload Videos
+                    </button>
+                </form>
+                </div>
+    </div>    
     );
 
     return <div>Data: {data}</div>
