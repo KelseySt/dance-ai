@@ -3,20 +3,12 @@ import React, { useEffect, useState } from 'react';
 
 function Upload() {
     const [setData] = useState(null);
-
-        // const [video1text, setVideo1Text] = useState('Reference Video');
-        const [refVideo, setrefVideo] = useState('Reference Dance');
-
-        // const [video2text, setVideo2Text] = useState('Your Dance');
-        const [userVideo, setuserVideo] = useState('Your Dance');
-
-        // const [video1file, setVideo1File] = useState(null);
-        const [refVideoFile, setrefVideoFile] = useState(null);
-
-
-        // const [video2file, setVideo2File] = useState(null);
-        const [userVideoFile, setuserVideoFile] = useState(null);
-
+    const [refVideo, setrefVideo] = useState('Reference Dance');
+    const [userVideo, setuserVideo] = useState('Your Dance');
+    const [refVideoFile, setrefVideoFile] = useState(null);
+    const [userVideoFile, setuserVideoFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
 
         // Function to handle file change
         const handleFileChange = (event, setter, fileSetter) => {
@@ -29,6 +21,8 @@ function Upload() {
 
         const handleSubmit = async (event) => {
             event.preventDefault(); //This should prevent the default form submission
+
+            setLoading(true);   //Loading true on form submission
             
             const formData = new FormData(); 
             if (refVideoFile) formData.append('ref_video', refVideoFile);
@@ -48,17 +42,19 @@ function Upload() {
 
                 if (response.ok) {
                     console.log("Success:");
+                    setLoading(false);  //Stops loading on success
                 } else {
                     console.error("Uploaded failed: ", response.statusText);
                     console.log("Uploading:", refVideoFile, userVideoFile);
                 }
             } catch(error) {
                 console.error('Error', error);
+            } finally {
+                setLoading(false); //Stops loading incase of error
             }
         };
-
     return (
-        <div className="bg-orange-200 flex items-center justify-center h-screen w-screen">
+            <div className="bg-orange-200 flex items-center justify-center h-screen w-screen">
             <div className="absolute inset-x-96 w-96 h-96 scale-125 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
             <div className="absolute inset-y-40 w-96 h-96 scale-125 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob"></div>
             <div className="absolute right-96 bottom-10 inset-x--10 w-96 h-96 scale-125 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-50 animate-blob animation-delay-4000"></div>
@@ -83,8 +79,8 @@ function Upload() {
                         </label>
                     <button type="submit" class="block bg-green-500 text-white py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">Upload Videos</button>
                 </form>
-        </div>
-        </div>
-        );
-   }
-     export default Upload;
+                </div>
+                </div>
+                );
+           }
+             export default Upload;
