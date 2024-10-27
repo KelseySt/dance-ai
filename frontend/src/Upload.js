@@ -1,9 +1,11 @@
 import './Upload.css';
 import React, { useEffect, useState } from 'react';
+import {useNavigate} from 'react-router-dom'
 
 function Upload() {
     const [setData] = useState(null);
-  
+    const navigate = useNavigate(); 
+
     /* Fetch data from Flask/Backend */
     useEffect(() => {
       fetch('http://127.0.0.1:5000/api/data').then(response => response.json())
@@ -61,9 +63,11 @@ function Upload() {
             } catch(error) {
                 console.error('Error', error);
             }
+            navigate('/video-feedback', {state: {json_response:response}})
         };
 
     return (
+    
     <div className="bg-purple-500 p-7 rounded-[30px] w-[400px] shadow-[0px_4px_8px_rgba(0,0,0,0,2)] text-center">
          <h2 className="text-[2em] mb-[15px]">Upload Your Videos</h2>
          <form id="upload-form">

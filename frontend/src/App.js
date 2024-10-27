@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef} from 'react';
 import BlackBar from './components/BlackBar.js';
 import ClickableSegment from './components/ClickableSegment.js';
 import ReactPlayer from 'react-player';
+import { useLocation } from 'react-router-dom';
 
 let numOfTimestamps;
 let timestampRanges;
@@ -147,12 +148,20 @@ function App() {
   const [data, setData] = useState(null);
 
   return (
+    <>
+    <Router>
+      <Routes>
+        <Route path='/video-feedback' element={<App/>}/>
+      </Routes>
+    </Router>
+
     <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
       <div className="bg-[#221833] app-body h-screen w-auto grid grid-rows-5 justify-items-center rounded">
         <TopComponent />
         <BottomComponent progressValue={progressValue}/>
       </div>
     </div>
+    </>
   );
 }
 
@@ -171,9 +180,10 @@ function Setup() {
   [progressValue, setProgressValue] = useState(0); 
 
   timestampArr = parseFeedback(jsonData);
-
+  const location = useLocation(); 
+  const {data} = location.state || {}; 
   useEffect(() => {
-    const updatedRanges = parseFeedback(jsonData).map(
+    const updatedRanges = parseFeedback(data.json_response).map(
       ([totalLength, start, end, feedback, improvement]) => {
         const first = msToProgress(start, totalLength);
         const second = msToProgress(end, totalLength);
