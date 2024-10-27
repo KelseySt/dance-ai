@@ -1,21 +1,14 @@
 import './Upload.css';
 import React, { useEffect, useState } from 'react';
 
-function Upload(props) {
-
-        // const [video1text, setVideo1Text] = useState('Reference Video');
-        const [refVideo, setrefVideo] = useState('Reference Dance');
-
-        // const [video2text, setVideo2Text] = useState('Your Dance');
-        const [userVideo, setuserVideo] = useState('Your Dance');
-
-        // const [video1file, setVideo1File] = useState(null);
-        const [refVideoFile, setrefVideoFile] = useState(null);
-
-
-        // const [video2file, setVideo2File] = useState(null);
-        const [userVideoFile, setuserVideoFile] = useState(null);
-
+function Upload() {
+    const [setData] = useState(null);
+    const [refVideo, setrefVideo] = useState('Reference Dance');
+    const [userVideo, setuserVideo] = useState('Your Dance');
+    const [refVideoFile, setrefVideoFile] = useState(null);
+    const [userVideoFile, setuserVideoFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
 
         // Function to handle file change
         const handleFileChange = (event, setter, fileSetter) => {
@@ -28,6 +21,8 @@ function Upload(props) {
 
         const handleSubmit = async (event) => {
             event.preventDefault(); //This should prevent the default form submission
+
+            setLoading(true);   //Loading true on form submission
             
             const formData = new FormData(); 
             if (refVideoFile) formData.append('ref_video', refVideoFile);
@@ -45,12 +40,16 @@ function Upload(props) {
                     const json_response = await response.json()
                     console.log(json_response)
                     props.setResponse(json_response)
+                    console.log("Success:");
+                    setLoading(false);  //Stops loading on success
                 } else {
                     console.error("Uploaded failed: ", response.statusText);
                     console.log("Uploading:", refVideoFile, userVideoFile);
                 }
             } catch(error) {
                 console.error('Error', error);
+            } finally {
+                setLoading(false); //Stops loading incase of error
             }
         };
     return (
