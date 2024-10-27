@@ -81,14 +81,16 @@ function ProgressBarComponent({ progressValue }) {
   );
 }
 
-function VideoComponent({ title , url = "	https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"}) {
+function VideoComponent({ title , url = "http://localhost:3000/student.mp4"}) {
   return (
     <div
       className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
     >
-      <ReactPlayer url={url} width="100%" height="100%" controls={true}  onProgress={(progress) => {
-          setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
-        }} /> 
+      <div className="w-full h-full" style={{ paddingTop: "56.25%", position: "relative" }}>  
+        <ReactPlayer url={url} width="100%" height="100%" controls={true}    style={{ top: "0", position: "absolute", left: "0" }} onProgress={(progress) => {
+            setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+          }} /> 
+      </div>
     </div>
   );
 }
