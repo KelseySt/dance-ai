@@ -31,8 +31,8 @@ function Upload() {
             event.preventDefault(); //This should prevent the default form submission
             
             const formData = new FormData(); 
-            formData.append('ref_video', refVideoFile);
-            formData.append('user_video', userVideoFile);
+            if (refVideoFile) formData.append('ref_video', refVideoFile);
+            if (userVideoFile) formData.append('user_video', userVideoFile);
 
             try {
                 // const response = await fetch('/your-upload-endpoint', { //replace with upload endpoint
@@ -71,12 +71,12 @@ function Upload() {
                         onChange={(e) => handleFileChange(e, setrefVideo, setrefVideoFile)}
                         handleSubmit/>
                         </label>
-                <label for="refVideo" class="block bg-rose-200 border-2 border-white rounded-[15px] my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
+                <label for="userVideo" class="block bg-rose-200 border-2 border-white rounded-[15px] my-2 p-4 text-black cursor-pointer transition-colors duration-300 hover:bg-gray-300 shadow-md">
                 {userVideo}                                  
-                        <input type="file" id="userVideoFile" name="userVideoFile" accept="video/*" required className="hidden" 
-                               onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
-                               handleSubmit/>
-                               </label>
+                <input type="file" id="userVideo" name="userVideo" accept="video/*" required className="hidden"
+                        onChange={(e) => handleFileChange(e, setuserVideo, setuserVideoFile)}
+                        handleSubmit/>
+                        </label>
                     <button type="submit" class="block bg-green-500 text-white py-2 px-4 rounded-lg w-full cursor-pointer text-lg transition-colors duration-300 hover:bg-green-600">Upload Videos</button>
                 </form>
         </div>

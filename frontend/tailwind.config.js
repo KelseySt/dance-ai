@@ -22,7 +22,7 @@ module.exports = {
               transform: 'translate(-50px, 20px) scale(0.9)',
             },
             '100%': {
-              transform: 'translate(0px, 0px) scale(0.8)',
+              transform: 'translate(0px, 0px) scale(1)',
           }
           }
         }
