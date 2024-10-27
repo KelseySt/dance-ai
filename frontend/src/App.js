@@ -1,11 +1,12 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import BlackBar from './components/BlackBar.js';
 import ClickableSegment from './components/ClickableSegment.js';
+import ReactPlayer from 'react-player';
 
 let numOfTimestamps;
 let timestampRanges;
-let showInfobox;
+let showInfobox;  
 let infoboxPosition;
 let infoboxTimestamp;
 let infoboxFeedback;
@@ -17,6 +18,145 @@ let setInfoboxTimestamp;
 let setInfoboxFeedback;
 let setInfoboxImprovement;
 let timestampArr;
+let progressValue;
+let setProgressValue;
+
+
+
+function handleClick(position, timestamp, feedback, improvement) {
+  setShowInfobox(true);
+  setInfoboxPosition(position);
+  setInfoboxTimestamp(timestamp);
+  setInfoboxFeedback(feedback);
+  setInfoboxImprovement(improvement);
+}
+
+function PairOfBoxes({ firstPosition, secondPosition, onClick }) {
+  return (
+    <>
+      <BlackBar progress={firstPosition} />
+      <ClickableSegment
+        position={firstPosition}
+        distance={secondPosition - firstPosition}
+        onClick={onClick}
+      />
+      <BlackBar progress={secondPosition} />
+    </>
+  );
+}
+
+function ProgressBarComponent({ progressValue }) {
+  return (
+    <div className="bg-[#392850] flex justify-center row-span-3 rounded shadow-md">
+      <div className="relative w-4/5 bg-gray-700 rounded-full h-5 dark:bg-gray-400">
+        <div
+          className="bg-gradient-to-r from-cyan-500 to-blue-500 h-5 rounded-full transition-all duration-300 ease-in-out"
+          style={{ width: `${progressValue}%` }}
+        ></div>
+        {timestampRanges.map(
+          ([totalLength, first, second, clickPosition, feedback, improvement], index) => (
+            <PairOfBoxes
+              key={index}
+              firstPosition={first}
+              secondPosition={second}
+              onClick={() =>
+                handleClick(
+                  clickPosition,
+                  secondFormat(
+                    Math.round(progressToMs(first, totalLength))
+                  ) +
+                    " - " +
+                    secondFormat(
+                      Math.round(progressToMs(second, totalLength))
+                    ),
+                  feedback,
+                  improvement
+                )
+              }
+            />
+          )
+        )}
+      </div>
+    </div>
+  );
+}
+
+function VideoComponent({ title , url = "	https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"}) {
+  return (
+    <div
+      className="bg-[#333] justify-items-center mx-3 my-15 border border-gray-600 rounded col-span-2"
+    >
+      <ReactPlayer url={url} width="100%" height="100%" controls={true}  onProgress={(progress) => {
+          setProgressValue(progress.playedSeconds/progress.loadedSeconds * 100); // Update progressValue based on seconds played
+        }} /> 
+    </div>
+  );
+}
+
+function TopComponent() {
+  useEffect(() => {
+    // This effect will run whenever showInfobox changes
+  }, [showInfobox]);
+
+  return (
+    <div className="grid grid-cols-3 w-full row-span-4 ">
+      <div className="flex justify-center items-center col-span-1 w-11/12 mx-3 my-10 rounded">
+        {showInfobox ? (
+          <InfoboxComponent
+            timestamp={infoboxTimestamp}
+            feedback={infoboxFeedback}
+            improvement={infoboxImprovement}
+          />
+        ) : null}
+      </div>
+      <VideoComponent title="Student" />
+    </div>
+  );
+}
+
+function BottomComponent( { progressValue }) {
+  return (
+    <div className="bg-[#392850] flex items-center grid grid-row-3 w-full row-span-1 border border-gray-600">
+      <ProgressBarComponent progressValue={progressValue} />
+    </div>
+  );
+}
+
+function InfoboxComponent({ timestamp, feedback, improvement }) {
+  return (
+    <div
+      className="absolute bg-gray-800 border border-gray-600 p-4 rounded w-1/4 shadow-md  transition-opacity duration-300 ease-in-out"
+      style={{ top: '5%', left: '17%', transform: 'translateX(-50%)', opacity: showInfobox ? 1 : 0 }}
+    >
+      <h2 className="text-lg font-bold text-gray-300 underline">Timestamp:</h2>
+      <p className="text-lg text-gray-400">{timestamp}</p>
+
+      <h2 className="text-lg font-bold text-gray-300 underline">Feedback:</h2>
+      <p className="text-lg text-gray-400">{feedback}</p>
+
+      <h2 className="text-lg font-bold text-gray-300 underline">
+        Summary:
+      </h2>
+      <p className="text-lg text-gray-400">{improvement}</p>
+    </div>
+  );
+}
+
+function App() {
+  Setup();
+  const [data, setData] = useState(null);
+
+  return (
+    <div className="app-container bg-[#221833] text-center w-screen h-screen rounded">
+      <div className="bg-[#221833] app-body h-screen w-auto grid grid-rows-5 justify-items-center rounded">
+        <TopComponent />
+        <BottomComponent progressValue={progressValue}/>
+      </div>
+    </div>
+  );
+}
+
+export default App;
 
 function Setup() {
   numOfTimestamps = jsonData.feedback.length;
@@ -26,6 +166,7 @@ function Setup() {
   [infoboxTimestamp, setInfoboxTimestamp] = useState(null);
   [infoboxFeedback, setInfoboxFeedback] = useState(null);
   [infoboxImprovement, setInfoboxImprovement] = useState(null);
+  [progressValue, setProgressValue] = useState(0); 
 
   timestampArr = parseFeedback(jsonData);
 
