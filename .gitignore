@@ -21,5 +21,3 @@ build/
 
 ./test*
 ./flaskr/test*
-
-./processed_output.mp4
