@@ -1,7 +1,7 @@
 import './Upload.css';
 import React, { useEffect, useState } from 'react';
 
-function Upload() {
+function Upload(props) {
     const [setData] = useState(null);
     const [refVideo, setrefVideo] = useState('Reference Dance');
     const [userVideo, setuserVideo] = useState('Your Dance');
